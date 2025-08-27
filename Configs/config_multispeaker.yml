@@ -5,8 +5,8 @@ log_interval: 10
 device: "cuda"
 epochs_1st: 150 # Reduced from 300 - appropriate for small dataset
 epochs_2nd: 75  # Reduced from 150 - prevents overfitting
-batch_size: 16  # Good for your setup
-max_len: 400    # Good for ~5 second clips
+batch_size: 8   # Reduced to avoid OOM
+max_len: 200    # Reduced to avoid OOM
 pretrained_model: ""
 second_stage_load_pretrained: true # set to true if the pre-trained model is for 2nd stage
 load_only_params: false # set to true if do not want to load epoch numbers and optimizer parameters
@@ -107,9 +107,9 @@ optimizer_params:
 
 # FIXED: Complete SLM adversarial parameters
 slmadv_params:
-  min_len: 300 # Reduced for smaller dataset
-  max_len: 400 # Reduced for smaller dataset
-  batch_percentage: 0.3 # Good for preventing OOM with small dataset
+  min_len: 150 # Reduced for smaller dataset
+  max_len: 200 # Reduced for smaller dataset
+  batch_percentage: 0.25 # Further reduced to prevent OOM
   iter: 20 # update the discriminator every this iterations of generator update
   thresh: 5 # gradient norm above which the gradient is scaled
   scale: 0.01 # gradient scaling factor for predictors from SLM discriminators
