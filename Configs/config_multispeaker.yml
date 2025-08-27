@@ -88,8 +88,8 @@ slmadv_params:
   batch_percentage: 0.3 # percentage of SLM adversarial training batch size
   iter: 10 # update the discriminator every this iterations of G
 
-optimizer:
-  learning_rate: 1e-4
+optimizer_params:
+  lr: 1e-4
   eps: 1e-8
   beta1: 0.9
   beta2: 0.999
