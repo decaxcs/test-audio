@@ -6,6 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 StyleTTS2 is a state-of-the-art text-to-speech (TTS) synthesis system that uses style diffusion and adversarial training with large speech language models to achieve human-level TTS synthesis. It supports both single-speaker and multi-speaker models.
 
+## Quick Start
+
+After git pull, run the setup script:
+```bash
+bash server_setup.sh
+```
+
 ## Commands
 
 ### Installation
