@@ -4,9 +4,9 @@ save_freq: 10
 log_interval: 10
 device: "cuda"
 epochs_1st: 150 # Reduced from 300 - appropriate for small dataset
-epochs_2nd: 75  # Reduced from 150 - prevents overfitting
-batch_size: 16  # Minimum recommended to avoid NaN losses
-max_len: 100    # Reduced to fit batch_size=16 in memory
+epochs_2nd: 100  # Extended for stability with small dataset
+batch_size: 8   # Better for 108 samples - more batches per epoch
+max_len: 120    # Balanced for batch_size=8 in memory
 pretrained_model: ""
 second_stage_load_pretrained: true # set to true if the pre-trained model is for 2nd stage
 load_only_params: false # set to true if do not want to load epoch numbers and optimizer parameters
@@ -92,18 +92,18 @@ loss_params:
     lambda_F0: 1. # F0 reconstruction loss (2nd stage)
     lambda_norm: 1. # norm reconstruction loss (2nd stage)
     lambda_dur: 1. # duration loss (2nd stage)
-    lambda_ce: 20. # duration predictor probability output CE loss (2nd stage)
+    lambda_ce: 10. # Reduced for stability - duration predictor CE loss
     lambda_sty: 1. # style reconstruction loss (2nd stage)
     lambda_diff: 1. # score matching loss (2nd stage)
     
-    diff_epoch: 10 # style diffusion starting epoch (2nd stage)
-    joint_epoch: 15 # joint training starting epoch (2nd stage)
+    diff_epoch: 20 # Delayed for stability - style diffusion starting epoch
+    joint_epoch: 25 # Delayed for stability - joint training starting epoch
 
 # FIXED: Complete optimizer parameters
 optimizer_params:
-  lr: 0.0001 # general learning rate
-  bert_lr: 0.00001 # learning rate for PLBERT
-  ft_lr: 0.00001 # learning rate for acoustic modules
+  lr: 0.00005 # Reduced for stability with small dataset
+  bert_lr: 0.000005 # Reduced for PLBERT stability
+  ft_lr: 0.000005 # Reduced for acoustic modules
 
 # FIXED: Complete SLM adversarial parameters
 slmadv_params:
