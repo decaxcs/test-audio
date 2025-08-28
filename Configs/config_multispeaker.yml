@@ -5,8 +5,8 @@ log_interval: 10
 device: "cuda"
 epochs_1st: 150 # Reduced from 300 - appropriate for small dataset
 epochs_2nd: 100  # Extended for stability with small dataset
-batch_size: 2   # CRITICAL: Very small for 108 samples to avoid NaN
-max_len: 200    # Increased for small batch size
+batch_size: 16   # MUST BE >= 16 to avoid NaN losses (documented requirement)
+max_len: 150    # Reduced to fit batch_size 16 in memory
 pretrained_model: ""
 second_stage_load_pretrained: true # set to true if the pre-trained model is for 2nd stage
 load_only_params: false # set to true if do not want to load epoch numbers and optimizer parameters
@@ -101,15 +101,15 @@ loss_params:
 
 # FIXED: Complete optimizer parameters
 optimizer_params:
-  lr: 0.000001 # ULTRA LOW for small dataset stability
-  bert_lr: 0.0000001 # ULTRA LOW for PLBERT stability  
-  ft_lr: 0.0000001 # ULTRA LOW for acoustic modules
+  lr: 0.0001 # Standard learning rate for batch_size 16
+  bert_lr: 0.00001 # Standard BERT learning rate
+  ft_lr: 0.00001 # Standard fine-tuning learning rate
 
 # FIXED: Complete SLM adversarial parameters
 slmadv_params:
   min_len: 100 # Reduced for V100 16GB
   max_len: 150 # Reduced for V100 16GB
-  batch_percentage: 0.2 # Further reduced for V100 16GB
+  batch_percentage: 0.3 # Adjusted for batch_size 16
   iter: 20 # update the discriminator every this iterations of generator update
   thresh: 5 # gradient norm above which the gradient is scaled
   scale: 0.01 # gradient scaling factor for predictors from SLM discriminators

@@ -45,11 +45,11 @@ class STFTLoss(torch.nn.Module):
         """
         x_mag = self.to_mel(x)
         mean, std = -4, 4
-        x_mag = (torch.log(1e-5 + x_mag) - mean) / std
+        x_mag = (torch.log(1e-4 + x_mag) - mean) / std  # Increased epsilon for stability
         
         y_mag = self.to_mel(y)
         mean, std = -4, 4
-        y_mag = (torch.log(1e-5 + y_mag) - mean) / std
+        y_mag = (torch.log(1e-4 + y_mag) - mean) / std  # Increased epsilon for stability
         
         sc_loss = self.spectral_convergenge_loss(x_mag, y_mag)    
         return sc_loss
