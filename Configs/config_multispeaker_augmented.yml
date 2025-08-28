@@ -3,7 +3,7 @@ first_stage_path: "first_stage.pth"
 save_freq: 20  # Save every 20 epochs
 log_interval: 10
 device: "cuda"
-epochs_1st: 400  # Extended for better convergence with augmented data
+epochs_1st: 250  # Optimal for small dataset with augmentation (community-tested)
 epochs_2nd: 150  # Extended for stage 2
 batch_size: 16   # MUST be >= 16 to avoid NaN
 max_len: 100    # Optimized for memory
