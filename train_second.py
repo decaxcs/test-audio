@@ -462,12 +462,15 @@ def main(config_path):
                 optimizer.zero_grad()
                 continue
             
-            # Gradient clipping for stability during early epochs
-            if epoch < 10:
-                torch.nn.utils.clip_grad_norm_(model.bert_encoder.parameters(), max_norm=1.0)
-                torch.nn.utils.clip_grad_norm_(model.bert.parameters(), max_norm=1.0)
-                torch.nn.utils.clip_grad_norm_(model.predictor.parameters(), max_norm=1.0)
-                torch.nn.utils.clip_grad_norm_(model.predictor_encoder.parameters(), max_norm=1.0)
+            # AGGRESSIVE gradient clipping for small dataset stability
+            torch.nn.utils.clip_grad_norm_(model.bert_encoder.parameters(), max_norm=0.5)
+            torch.nn.utils.clip_grad_norm_(model.bert.parameters(), max_norm=0.5)
+            torch.nn.utils.clip_grad_norm_(model.predictor.parameters(), max_norm=0.5)
+            torch.nn.utils.clip_grad_norm_(model.predictor_encoder.parameters(), max_norm=0.5)
+            if 'style_encoder' in model:
+                torch.nn.utils.clip_grad_norm_(model.style_encoder.parameters(), max_norm=0.5)
+            if 'decoder' in model:
+                torch.nn.utils.clip_grad_norm_(model.decoder.parameters(), max_norm=0.5)
 
             optimizer.step('bert_encoder')
             optimizer.step('bert')

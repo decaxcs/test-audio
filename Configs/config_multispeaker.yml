@@ -5,8 +5,8 @@ log_interval: 10
 device: "cuda"
 epochs_1st: 150 # Reduced from 300 - appropriate for small dataset
 epochs_2nd: 100  # Extended for stability with small dataset
-batch_size: 8   # Better for 108 samples - more batches per epoch
-max_len: 120    # Balanced for batch_size=8 in memory
+batch_size: 2   # CRITICAL: Very small for 108 samples to avoid NaN
+max_len: 200    # Increased for small batch size
 pretrained_model: ""
 second_stage_load_pretrained: true # set to true if the pre-trained model is for 2nd stage
 load_only_params: false # set to true if do not want to load epoch numbers and optimizer parameters
@@ -101,9 +101,9 @@ loss_params:
 
 # FIXED: Complete optimizer parameters
 optimizer_params:
-  lr: 0.00005 # Reduced for stability with small dataset
-  bert_lr: 0.000005 # Reduced for PLBERT stability
-  ft_lr: 0.000005 # Reduced for acoustic modules
+  lr: 0.000001 # ULTRA LOW for small dataset stability
+  bert_lr: 0.0000001 # ULTRA LOW for PLBERT stability  
+  ft_lr: 0.0000001 # ULTRA LOW for acoustic modules
 
 # FIXED: Complete SLM adversarial parameters
 slmadv_params:
