@@ -143,18 +143,21 @@ def main(config_path):
         if config.get('first_stage_path', '') != '':
             first_stage_path = osp.join(log_dir, config.get('first_stage_path', 'first_stage.pth'))
             print('Loading the first stage model at %s ...' % first_stage_path)
+            # CRITICAL FIX: Do NOT ignore style_encoder - we need its trained weights!
             model, _, start_epoch, iters = load_checkpoint(model, 
                 None, 
                 first_stage_path,
                 load_only_params=True,
-                ignore_modules=['bert', 'bert_encoder', 'predictor', 'predictor_encoder', 'msd', 'mpd', 'wd', 'diffusion']) # keep starting epoch for tensorboard log
+                ignore_modules=['bert', 'bert_encoder', 'predictor', 'msd', 'mpd', 'wd', 'diffusion']) # removed predictor_encoder, keep style_encoder
 
             # these epochs should be counted from the start epoch
             diff_epoch += start_epoch
             joint_epoch += start_epoch
             epochs += start_epoch
             
+            # Copy the LOADED style_encoder weights to predictor_encoder
             model.predictor_encoder = copy.deepcopy(model.style_encoder)
+            print("Copied trained style_encoder weights to predictor_encoder")
         else:
             raise ValueError('You need to specify the path to the first stage model.') 
 
