@@ -452,9 +452,13 @@ def main(config_path):
 
             running_loss += loss_mel.item()
             g_loss.backward()
+            # Skip this iteration if loss is NaN instead of stopping
             if torch.isnan(g_loss):
-                from IPython.core.debugger import set_trace
-                set_trace()
+                print(f"Warning: NaN loss detected at epoch {epoch}, batch {i}. Skipping this batch.")
+                optimizer.zero_grad()
+                continue
+                # from IPython.core.debugger import set_trace
+                # set_trace()
 
             optimizer.step('bert_encoder')
             optimizer.step('bert')
