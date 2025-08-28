@@ -416,6 +416,9 @@ def main(config_path):
                 d_loss.backward()
                 optimizer.step('msd')
                 optimizer.step('mpd')
+                # Clear cache after discriminator update to prevent OOM
+                if epoch >= diff_epoch and i % 10 == 0:
+                    torch.cuda.empty_cache()
             else:
                 d_loss = 0
 
@@ -551,7 +554,7 @@ def main(config_path):
                 # SLM discriminator loss
                 if d_loss_slm != 0:
                     optimizer.zero_grad()
-                    d_loss_slm.backward(retain_graph=True)
+                    d_loss_slm.backward()  # Removed retain_graph=True to prevent memory accumulation
                     optimizer.step('wd')
 
             else:

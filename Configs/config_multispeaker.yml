@@ -6,7 +6,7 @@ device: "cuda"
 epochs_1st: 150 # Reduced from 300 - appropriate for small dataset
 epochs_2nd: 100  # Extended for stability with small dataset
 batch_size: 16   # MUST BE >= 16 to avoid NaN losses (documented requirement)
-max_len: 150    # Reduced to fit batch_size 16 in memory
+max_len: 100    # Further reduced to prevent OOM when discriminators activate
 pretrained_model: ""
 second_stage_load_pretrained: true # set to true if the pre-trained model is for 2nd stage
 load_only_params: false # set to true if do not want to load epoch numbers and optimizer parameters
@@ -109,7 +109,7 @@ optimizer_params:
 slmadv_params:
   min_len: 100 # Reduced for V100 16GB
   max_len: 150 # Reduced for V100 16GB
-  batch_percentage: 0.3 # Adjusted for batch_size 16
+  batch_percentage: 0.2 # Reduced to prevent OOM during SLM adversarial training
   iter: 20 # update the discriminator every this iterations of generator update
   thresh: 5 # gradient norm above which the gradient is scaled
   scale: 0.01 # gradient scaling factor for predictors from SLM discriminators
