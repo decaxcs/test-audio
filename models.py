@@ -696,10 +696,48 @@ def build_model(args, text_aligner, pitch_extractor, bert):
 def load_checkpoint(model, optimizer, path, load_only_params=True, ignore_modules=[]):
     state = torch.load(path, map_location='cpu')
     params = state['net']
+    
     for key in model:
         if key in params and key not in ignore_modules:
-            print('%s loaded' % key)
-            model[key].load_state_dict(params[key], strict=False)
+            try:
+                # Try direct loading first
+                model[key].load_state_dict(params[key], strict=False)
+                print('%s loaded' % key)
+            except RuntimeError as e:
+                # Handle key mismatch (module. prefix issue)
+                print(f'Direct loading failed for {key}, attempting to fix key mismatch...')
+                
+                # Get state dicts
+                model_state = model[key].state_dict()
+                saved_state = params[key]
+                
+                # Create new state dict with matching keys
+                new_state = {}
+                
+                # Check if we need to add or remove 'module.' prefix
+                model_keys = list(model_state.keys())
+                saved_keys = list(saved_state.keys())
+                
+                if len(model_keys) > 0 and len(saved_keys) > 0:
+                    # Check if saved has 'module.' but model doesn't
+                    if saved_keys[0].startswith('module.') and not model_keys[0].startswith('module.'):
+                        for k, v in saved_state.items():
+                            new_state[k.replace('module.', '')] = v
+                    # Check if model has 'module.' but saved doesn't  
+                    elif model_keys[0].startswith('module.') and not saved_keys[0].startswith('module.'):
+                        for k, v in saved_state.items():
+                            new_state['module.' + k] = v
+                    else:
+                        # Try matching by order if key names are completely different
+                        if len(model_keys) == len(saved_keys):
+                            for model_k, saved_k in zip(model_keys, saved_keys):
+                                new_state[model_k] = saved_state[saved_k]
+                        else:
+                            new_state = saved_state
+                    
+                    model[key].load_state_dict(new_state, strict=False)
+                    print('%s loaded with fixed keys' % key)
+    
     _ = [model[key].eval() for key in model]
     
     if not load_only_params:
